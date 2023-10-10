@@ -53,17 +53,20 @@ void loop() {
   //   delay(200); // Turn off the LED for 0.2 second
   // }
 
-  LDR_Val = analogRead(sensor);   /*Analog read LDR value*/
-    Serial.print("LDR Output Value: ");
-    Serial.println(LDR_Val);   /*Display LDR Output Val on serial monitor*/
-    if(LDR_Val > 100) {       /*If light intensity is HIGH*/
-        Serial.println(" High intensity ");
-        digitalWrite(led,LOW); /*LED Remains OFF*/
-    }
-    else {
-     /*Else if Light intensity is LOW LED will Remain ON*/
-        Serial.println("LOW Intensity ");
-        digitalWrite(led,HIGH);  /* LED Turn ON LDR value is less than 100*/
-    }
-    delay(1000);
+//test ldr
+  // LDR_Val = analogRead(sensor);   /*Analog read LDR value*/
+  //   Serial.print("LDR Output Value: ");
+  //   Serial.println(LDR_Val);   /*Display LDR Output Val on serial monitor*/
+  //   if(LDR_Val > 100) {       /*If light intensity is HIGH*/
+  //       Serial.println(" High intensity ");
+  //       digitalWrite(led,LOW); /*LED Remains OFF*/
+  //   }
+  //   else {
+  //    /*Else if Light intensity is LOW LED will Remain ON*/
+  //       Serial.println("LOW Intensity ");
+  //       digitalWrite(led,HIGH);  /* LED Turn ON LDR value is less than 100*/
+  //   }
+  //   delay(1000);
+
+  int analogValue = analogRead(sensor)
 }
