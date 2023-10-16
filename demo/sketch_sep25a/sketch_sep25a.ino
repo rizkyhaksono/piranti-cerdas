@@ -1,10 +1,11 @@
 const int switchPin = 15;
-const int ledPin = 14;
+const int ledPin = 14;  
 const int ledPin2 = 27;
 const int speakerPin = 12;
 int LDR_Val = 0;     /*Variable to store photoresistor value*/
 int sensor =34;      /*Analogue Input for photoresistor*/
 int led= 25;   
+
 
 // const int ldrPin = A0; // Analog pin for LDR
 
