@@ -1,16 +1,14 @@
 #include <WiFi.h>
 
-const char* primarySSID = "Yovii479"; // Ganti dengan SSID jaringan WiFi utama Anda
-const char* primaryPassword = "yovi1234"; // Ganti dengan password WiFi utama Anda
+const char* primarySSID = "Widodo";
+const char* primaryPassword = "bigbunda123";
 
 void setup() {
   Serial.begin(115200);
   connectToWiFi(primarySSID, primaryPassword);
-  // connectToOpenWiFi();
 }
 
 void loop() {
-  // Your main code here
 }
 
 void connectToWiFi(const char* ssid, const char* password) {
@@ -27,7 +25,7 @@ void connectToWiFi(const char* ssid, const char* password) {
 
     if (tryCount == 1) {
       Serial.println("Gagal terhubung ke WiFi utama. Mencoba jaringan WiFi terbuka...");
-      WiFi.begin("", ""); // Jaringan WiFi terbuka
+      WiFi.begin("", "");
     } else if (tryCount == 2) {
       Serial.println("Gagal terhubung ke WiFi terbuka. Mencoba jaringan WiFi terbuka lainnya...");
       WiFi.scanNetworks();
