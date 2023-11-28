@@ -5,10 +5,20 @@
 #define SENSORPIN 34
 #define LEDPIN 25
 
-const char* ssid = "Widodo";
-const char* password = "bigbunda123";
+// local
+// const char* ssid = "Apgriya_2.4";
+// const char* password = "griyamember";
 // const char* serverName = "http://localhost/modul4/cahaya.php";
-const char* serverName = "http://192.168.204.81/modul4/cahaya.php";
+
+// umm
+// const char* ssid = "Widodo";
+// const char* password = "bigbunda123";
+// const char* serverName = "http://192.168.204.81/modul4/cahaya.php";
+
+// hp
+const char* ssid = "lorem";
+const char* password = "test1234";
+const char* serverName = "http://172.20.10.5/modul4/cahaya.php";
 
 void setup() {
   Serial.begin(9600);
