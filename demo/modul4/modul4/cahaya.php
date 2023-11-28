@@ -2,7 +2,7 @@
 
 $servername = "localhost";
 $username = "root";
-$password = "root";
+$password = "";
 $dbname = "pirdas_modul4";
 
 if ($_GET["ldr_value"])
