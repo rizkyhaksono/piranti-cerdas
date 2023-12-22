@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-// import ChartComponent from "../../components/ChartComponent";
+import ChartComponent from "../../components/ChartComponent";
 
 export default function Home() {
   return (
@@ -12,7 +12,7 @@ export default function Home() {
         </Link>
         <div className="font-medium text-2xl">Dashboard Smart Home</div>
 
-        {/* <ChartComponent /> */}
+        <ChartComponent />
       </div>
     </>
   );
