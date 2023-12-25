@@ -27,7 +27,7 @@ export default function Home() {
     <>
       <NavbarComponent />
       <div className="text-stone-700 font-sans">
-        <div className="container mx-auto text-center mt-10 font-medium text-2xl">Dashboard Smart Home</div>
+        <div className="container mx-auto text-center mt-10 font-bold text-3xl">Dashboard Smart Home</div>
 
         <ChartComponent data={sensorData} />
       </div>

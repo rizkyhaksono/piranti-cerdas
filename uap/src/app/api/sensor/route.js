@@ -1,5 +1,6 @@
-import { NextResponse } from "next/server";
 import mysql from "mysql2/promise";
+import { createPool } from "mysql2/promise";
+import { NextResponse } from "next/server";
 
 const dbConfig = {
   host: process.env.DB_HOST,
@@ -9,22 +10,27 @@ const dbConfig = {
   port: process.env.DB_PORT,
 };
 
+const pool = createPool(dbConfig);
+
 export async function GET() {
   try {
-    const connection = await mysql.createConnection(dbConfig);
-    const query = await connection.execute("SELECT * FROM `sensor`");
+    const connection = await pool.getConnection();
+    const query = await connection.execute("SELECT * FROM `sensor` ORDER BY created_at DESC LIMIT 20");
+    connection.release();
     return NextResponse.json({ data: query[0] });
   } catch (error) {
-    console.log("Error :", error);
+    console.error("Error in GET route:", error);
+    return NextResponse.error("Internal Server Error", 500);
   }
 }
 
 export async function POST(req, res) {
   try {
-    const { data } = await req.json();
+    const { jarak, ldr_value } = await req.json();
 
-    const connection = await mysql.createConnection(dbConfig);
-    await connection.execute("INSERT INTO `sensor` (data) VALUES (?)", [data]);
+    const connection = await pool.getConnection();
+    await connection.execute("INSERT INTO `sensor` (jarak, ldr_value) VALUES (?, ?)", [jarak, ldr_value]);
+    connection.release();
 
     return NextResponse.json({ success: true, message: "Post added successfully" });
   } catch (error) {
