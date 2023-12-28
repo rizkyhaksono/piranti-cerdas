@@ -16,8 +16,8 @@ export default function ChartComponent({ data }) {
         <h2>Line Chart</h2>
         <LineChart data={lineChartData.reduce((acc, obj) => ({ ...acc, ...obj }), {})} />
 
-        <h2>Pie Chart</h2>
-        <PieChart data={pieChartData} />
+        {/* <h2>Pie Chart</h2>
+        <PieChart data={pieChartData} /> */}
 
         <h2>Area Chart</h2>
         <AreaChart data={areaChartData.reduce((acc, obj) => ({ ...acc, ...obj }), {})} />

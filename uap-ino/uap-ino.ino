@@ -17,8 +17,8 @@ DHT dht(DHTPIN, DHTTYPE);
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 
 const int LDRPin = 34;
-const char *ssid = "OXCOFFEE2";
-const char *password = "tanyabarista";
+const char *ssid = "Widodo";
+const char *password = "bigbunda123";
 // int RELAY_PIN = 35;
 
 void setup() {
@@ -67,16 +67,18 @@ void loop() {
 
     Serial.println("Object detected! Triggering action...");
 
+    if (temperature < 30.0) {
       if (distance < 15 || lightValue < 1000) {
-        if (temperature > 30.0) {
-            Serial.println("\nPERINGATAN: Suhu sangat panas! Aktifkan kipas angin kandang segera.");
-            digitalWrite(RELAY_PIN, HIGH);
-        } else {
-            Serial.println("\nSuhu dingin");
-            digitalWrite(RELAY_PIN, LOW);
-        }
+        // if (temperature > 30.0) {
+        //     Serial.println("\nPERINGATAN: Suhu sangat panas! Aktifkan kipas angin kandang segera.");
+        //     digitalWrite(RELAY_PIN, HIGH);
+        // } else {
+        //     Serial.println("\nSuhu dingin");
+        //     digitalWrite(RELAY_PIN, LOW);
+        // }
         // digitalWrite(RELAY_PIN, LOW);
         Serial.println("RELAY_PIN turned ON");
+        digitalWrite(RELAY_PIN, LOW);
         Serial.print("RELAY_PIN value: ");
         Serial.print("\nHumidity: ");
         Serial.print(humidity);
@@ -84,19 +86,19 @@ void loop() {
         Serial.print("\nTemperature: ");
         Serial.print(temperature);
 
-        sendData(distance, lightValue);
+        // sendData(distance, lightValue);
       }
 
       if (distance > 16 || lightValue > 1001) {
-        if (temperature > 30.0) {
-            Serial.println("\nPERINGATAN: Suhu sangat panas! Aktifkan kipas angin kandang segera.");
-            digitalWrite(RELAY_PIN, HIGH);
-        } else {
-            Serial.println("\nSuhu dingin");
-            digitalWrite(RELAY_PIN, LOW);
-        }
+        // if (temperature > 30.0) {
+        //     Serial.println("\nPERINGATAN: Suhu sangat panas! Aktifkan kipas angin kandang segera.");
+        // } else {
+        //     Serial.println("\nSuhu dingin");
+        //     digitalWrite(RELAY_PIN, HIGH);
+        // }
         // digitalWrite(RELAY_PIN, HIGH);
         Serial.println("RELAY_PIN turned OFF");
+        digitalWrite(RELAY_PIN, HIGH);
         Serial.print("RELAY_PIN value: ");
         Serial.print("Humidity: ");
         Serial.print(humidity);
@@ -104,8 +106,15 @@ void loop() {
         Serial.print("Temperature: ");
         Serial.print(temperature);
 
-        sendData(distance, lightValue);
+        // sendData(distance, lightValue);
       }
+    } else {
+        Serial.println("\nPERINGATAN: Suhu sangat panas! Aktifkan kipas angin kandang segera.");
+        digitalWrite(RELAY_PIN, HIGH);
+        Serial.print(" %\t");
+        Serial.print("Temperature: ");
+        Serial.print(temperature);
+    }
   } else {
     Serial.println("Error: No echo");
   }
