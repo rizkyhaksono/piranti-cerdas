@@ -1,20 +1,24 @@
 #include <NewPing.h>
 #include <HTTPClient.h>
 #include <WiFi.h>
+#include "DHT.h"
 
 #define TRIGGER_PIN 26  // D26
 #define ECHO_PIN 25     // D25
 #define MAX_DISTANCE 200 // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
 #define LIGHT_PIN 12     // D12, the pin to which the light is connected
-#define SERVER_URL "http://172.20.10.5:3000/api/sensor" // Update with your server IP
+#define SERVER_URL "http://192.168.1.12:3000/api/sensor" // Update with your server IP
 
-#define RELAY_PIN 23
+#define RELAY_PIN 14
+#define DHTPIN 27
+#define DHTTYPE DHT11
+DHT dht(DHTPIN, DHTTYPE);
 
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 
 const int LDRPin = 34;
-const char *ssid = "Rizky";
-const char *password = "02270509";
+const char *ssid = "OXCOFFEE2";
+const char *password = "tanyabarista";
 // int RELAY_PIN = 35;
 
 void setup() {
@@ -22,6 +26,7 @@ void setup() {
   pinMode(LIGHT_PIN, OUTPUT);
   pinMode(LDRPin, INPUT);
   pinMode(RELAY_PIN, OUTPUT);
+  dht.begin();
   // Connect to Wi-Fi
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
@@ -52,50 +57,57 @@ void loop() {
   int lightValue = analogRead(LDRPin);
   analyzeLightSensor(lightValue);
   unsigned int distance = sonar.ping_cm();
-  // int relayValue = param.asInt();
-  digitalWrite(RELAY_PIN, HIGH);
+  float temperature = dht.readTemperature();
+  float humidity = dht.readHumidity();
 
   if (distance != NO_ECHO) {
     Serial.print("Distance: ");
     Serial.print(distance);
     Serial.println(" cm");
 
-    // Add your logic here based on the distance
-    // For example, if distance is less than a certain threshold, trigger an action
-    if (distance < 50) {
-      // Your action or code here when the distance is less than 50 cm
-      Serial.println("Object detected! Triggering action...");
+    Serial.println("Object detected! Triggering action...");
 
-      // Check if the distance is less than 15 cm and turn on the light
-      // if (distance < 15 || LDRPin < 500) {
-      if (distance < 15) {
-        // digitalWrite(LIGHT_PIN, HIGH);  // Turn on the light
-        digitalWrite(RELAY_PIN, HIGH);
+      if (distance < 15 || lightValue < 1000) {
+        if (temperature > 30.0) {
+            Serial.println("\nPERINGATAN: Suhu sangat panas! Aktifkan kipas angin kandang segera.");
+            digitalWrite(RELAY_PIN, HIGH);
+        } else {
+            Serial.println("\nSuhu dingin");
+            digitalWrite(RELAY_PIN, LOW);
+        }
+        // digitalWrite(RELAY_PIN, LOW);
+        Serial.println("RELAY_PIN turned ON");
         Serial.print("RELAY_PIN value: ");
-        Serial.println(RELAY_PIN);
-        // Serial.print("Harusnya nyalasih ini");
-        // Send data to the server
-        // sendData(distance, 2000); // Update with your desired LDR value
+        Serial.print("\nHumidity: ");
+        Serial.print(humidity);
+        Serial.print(" %\t");
+        Serial.print("\nTemperature: ");
+        Serial.print(temperature);
+
+        sendData(distance, lightValue);
       }
 
-      // if (distance > 15 || LDRPin > 500 || LDRPin < 2000) {
-      //   digitalWrite(LIGHT_PIN, 128);
-      // }
-
-      // if (distance > 15 || LDRPin > 1000) {
-      if (distance > 15) {
-        // digitalWrite(LIGHT_PIN, LOW);
-        digitalWrite(RELAY_PIN, HIGH);
+      if (distance > 16 || lightValue > 1001) {
+        if (temperature > 30.0) {
+            Serial.println("\nPERINGATAN: Suhu sangat panas! Aktifkan kipas angin kandang segera.");
+            digitalWrite(RELAY_PIN, HIGH);
+        } else {
+            Serial.println("\nSuhu dingin");
+            digitalWrite(RELAY_PIN, LOW);
+        }
+        // digitalWrite(RELAY_PIN, HIGH);
+        Serial.println("RELAY_PIN turned OFF");
         Serial.print("RELAY_PIN value: ");
-        Serial.println(RELAY_PIN);
+        Serial.print("Humidity: ");
+        Serial.print(humidity);
+        Serial.print(" %\t");
+        Serial.print("Temperature: ");
+        Serial.print(temperature);
+
+        sendData(distance, lightValue);
       }
-    }
   } else {
     Serial.println("Error: No echo");
-        digitalWrite(RELAY_PIN, HIGH);
-
-    // analogWrite(LIGHT_PIN, LOW);
-    // digitalWrite(RELAY_PIN, LOW);
   }
 
   delay(500);  // Adjust the delay based on your requirements
@@ -121,109 +133,3 @@ void sendData(int jarak, int ldr_value) {
 
   http.end();
 }
-
-
-// #include <NewPing.h>
-// #include <WiFi.h>
-// #include <AsyncTCP.h>
-// #include <ArduinoJson.h>
-
-// #define TRIGGER_PIN 26  // D26
-// #define ECHO_PIN 25     // D25
-// #define MAX_DISTANCE 200 // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
-// #define LIGHT_PIN 12     // D12, the pin to which the light is connected
-// #define SERVER_URL "http://172.20.10.5:3000/api/sensor" // Update with your server IP
-
-// NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
-
-// const char *ssid = "lorem";
-// const char *password = "test1234";
-
-// AsyncWebServer server(80);
-
-// void setup() {
-//   Serial.begin(115200);
-//   pinMode(LIGHT_PIN, OUTPUT);
-
-//   // Connect to Wi-Fi
-//   WiFi.begin(ssid, password);
-//   while (WiFi.status() != WL_CONNECTED) {
-//     delay(1000);
-//     Serial.println("Connecting to WiFi...");
-//   }
-//   Serial.println("Connected to WiFi");
-
-//   // Route for handling HTTP POST requests
-//   server.on("/api/sensor", HTTP_POST, [](AsyncWebServerRequest *request){
-//     String jsonPayload = request->getParam("plain")->value();
-//     Serial.print("Received JSON payload: ");
-//     Serial.println(jsonPayload);
-
-//     // Parse JSON payload
-//     DynamicJsonDocument doc(1024);
-//     DeserializationError error = deserializeJson(doc, jsonPayload);
-//     if (error) {
-//       Serial.print("Error parsing JSON: ");
-//       Serial.println(error.c_str());
-//       request->send(400, "application/json", "{\"error\":\"Invalid JSON\"}");
-//       return;
-//     }
-
-//     int jarak = doc["jarak"];
-//     int ldr_value = doc["ldr_value"];
-
-//     // Handle your data as needed
-//     // Add your logic here based on the received data
-
-//     request->send(200, "application/json", "{\"status\":\"success\"}");
-//   });
-// }
-
-// void loop() {
-//   delay(50);  // Wait for the sensor to stabilize
-
-//   unsigned int distance = sonar.ping_cm();
-
-//   if (distance != NO_ECHO) {
-//     Serial.print("Distance: ");
-//     Serial.print(distance);
-//     Serial.println(" cm");
-
-//     // Add your logic here based on the distance
-//     // For example, if distance is less than a certain threshold, trigger an action
-//     if (distance < 50) {
-//       // Your action or code here when the distance is less than 50 cm
-//       Serial.println("Object detected! Triggering action...");
-
-//       // Check if the distance is less than 15 cm and turn on the light
-//       if (distance < 15) {
-//         digitalWrite(LIGHT_PIN, HIGH);  // Turn on the light
-
-//         // Send data to the server asynchronously
-//         sendDataAsync(distance, 2000); // Update with your desired LDR value
-//       } else {
-//         digitalWrite(LIGHT_PIN, LOW);  // Turn off the light if the distance is greater than or equal to 15 cm
-//       }
-//     }
-//   } else {
-//     Serial.println("Error: No echo");
-//   }
-
-//   delay(500);  // Adjust the delay based on your requirements
-// }
-
-// void sendDataAsync(int jarak, int ldr_value) {
-//   // Construct the JSON payload
-//   String payload = "{\"jarak\":" + String(jarak) + ",\"ldr_value\":" + String(ldr_value) + "}";
-
-//   // Send data to the server asynchronously
-//   AsyncHTTPClient *httpClient = new AsyncHTTPClient();
-//   httpClient->begin(SERVER_URL);
-//   httpClient->addHeader("Content-Type", "application/json");
-
-//   // Send POST request with the payload
-//   httpClient->POST(payload);
-
-//   // Don't forget to clean up
-//   delete httpClient;
-// }
